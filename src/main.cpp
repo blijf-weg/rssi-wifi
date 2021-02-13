@@ -34,22 +34,20 @@ void setup() {
   Serial.begin(115200);
   pinMode(2,OUTPUT);
   connectToNetwork();
-  initBuffers(2600);
+  initBuffers(10);
   Serial.println(WiFi.macAddress());
   Serial.println(WiFi.localIP());
  
-  //WiFi.disconnect(true);
-  //Serial.println(WiFi.localIP());
 
  
 }
  
 void loop() {
-  delay(0.1);
+  delay(100);
   long rssi = WiFi.RSSI();
   buffer.put(rssi);
   teller++;
-  if(teller%2600==0){
+  if(teller%10==0){
     Serial.printf("Gemiddelde: %f\n", buffer.getAverage());
     if(buffer.getAverage()>-40){
       digitalWrite(2,HIGH);
@@ -60,6 +58,16 @@ void loop() {
       }
     }
   }
-  //Serial.print("RSSI:");
-  //Serial.println(rssi);
+  if(teller%20==0){
+    WiFi.disconnect(true);
+    if(strcmp(ssid,ssid1) == 0){
+      ssid=ssid2;
+      password=password2;
+    }else{
+      ssid=ssid1;
+      password=password1;
+    }
+    connectToNetwork();
+  }
+
 }
